@@ -1,0 +1,15 @@
+D:\Ali practice\c#\camera control project\camera control project\bin\Debug\net7.0\camera control project.exe
+D:\Ali practice\c#\camera control project\camera control project\bin\Debug\net7.0\camera control project.deps.json
+D:\Ali practice\c#\camera control project\camera control project\bin\Debug\net7.0\camera control project.runtimeconfig.json
+D:\Ali practice\c#\camera control project\camera control project\bin\Debug\net7.0\camera control project.dll
+D:\Ali practice\c#\camera control project\camera control project\bin\Debug\net7.0\camera control project.pdb
+D:\Ali practice\c#\camera control project\camera control project\obj\Debug\net7.0\camera control project.csproj.AssemblyReference.cache
+D:\Ali practice\c#\camera control project\camera control project\obj\Debug\net7.0\camera control project.GeneratedMSBuildEditorConfig.editorconfig
+D:\Ali practice\c#\camera control project\camera control project\obj\Debug\net7.0\camera control project.AssemblyInfoInputs.cache
+D:\Ali practice\c#\camera control project\camera control project\obj\Debug\net7.0\camera control project.AssemblyInfo.cs
+D:\Ali practice\c#\camera control project\camera control project\obj\Debug\net7.0\camera control project.csproj.CoreCompileInputs.cache
+D:\Ali practice\c#\camera control project\camera control project\obj\Debug\net7.0\camera control project.dll
+D:\Ali practice\c#\camera control project\camera control project\obj\Debug\net7.0\refint\camera control project.dll
+D:\Ali practice\c#\camera control project\camera control project\obj\Debug\net7.0\camera control project.pdb
+D:\Ali practice\c#\camera control project\camera control project\obj\Debug\net7.0\camera control project.genruntimeconfig.cache
+D:\Ali practice\c#\camera control project\camera control project\obj\Debug\net7.0\ref\camera control project.dll
