@@ -15,8 +15,8 @@ namespace camera_control_project
 
         private const int DaysBack = 30;
 
-
-        private readonly List<int> _cameraIds = CameraConfiguration.CameraIds;
+        private readonly List<int> _cameraIds =
+            CameraConfiguration.CameraIds;
 
         public List<TrafficEvent> GenerateEvents(int count)
         {
@@ -28,11 +28,13 @@ namespace camera_control_project
                 );
             }
 
-            List<TrafficEvent> events = new List<TrafficEvent>();
+            List<TrafficEvent> events =
+                new List<TrafficEvent>(count);
 
-            Random random = new Random();
+            List<string> plates =
+                GeneratePlates();
 
-            List<string> plates = GeneratePlates(random);
+            DateTime now = DateTime.Now;
 
             for (int i = 1; i <= count; i++)
             {
@@ -41,20 +43,24 @@ namespace camera_control_project
                     Id = i,
 
                     PlateNo =
-                        plates[random.Next(plates.Count)],
+                        plates[Random.Shared.Next(plates.Count)],
 
                     CameraId =
-                        _cameraIds[random.Next(_cameraIds.Count)],
+                        _cameraIds[
+                            Random.Shared.Next(_cameraIds.Count)
+                        ],
 
                     Speed =
-                        random.Next(MinSpeed, MaxSpeed + 1),
+                        Random.Shared.Next(
+                            MinSpeed,
+                            MaxSpeed + 1
+                        ),
 
-                    MaxSpeed =
-                        MaxAllowedSpeed,
+                    MaxSpeed = MaxAllowedSpeed,
 
                     DateTime =
-                        DateTime.Now.AddDays(
-                            -random.Next(DaysBack)
+                        now.AddDays(
+                            -Random.Shared.Next(DaysBack)
                         )
                 };
 
@@ -64,16 +70,17 @@ namespace camera_control_project
             return events;
         }
 
-        private List<string> GeneratePlates(Random random)
+        private List<string> GeneratePlates()
         {
-            List<string> plates = new List<string>();
+            List<string> plates =
+                new List<string>(PlateCount);
 
             for (int i = 0; i < PlateCount; i++)
             {
                 string plate =
-                    $"{random.Next(10, 100)}" +
-                    $"{(char)random.Next('A', 'Z' + 1)}" +
-                    $"{random.Next(100, 1000)}";
+                    $"{Random.Shared.Next(10, 100)}" +
+                    $"{(char)Random.Shared.Next('A', 'Z' + 1)}" +
+                    $"{Random.Shared.Next(100, 1000)}";
 
                 plates.Add(plate);
             }
