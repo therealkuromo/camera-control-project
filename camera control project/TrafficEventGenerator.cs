@@ -5,23 +5,70 @@ namespace camera_control_project
 {
     public class TrafficEventGenerator
     {
+        private const int PlateCount = 50;
+
+        private const double MaxAllowedSpeed = 121;
+
+        private const int MinSpeed = 40;
+
+        private const int MaxSpeed = 160;
+
+        private const int DaysBack = 30;
+
+
+        private readonly List<int> _cameraIds = CameraConfiguration.CameraIds;
+
         public List<TrafficEvent> GenerateEvents(int count)
         {
+            if (count <= 0)
+            {
+                throw new ArgumentException(
+                    "Event count must be greater than zero.",
+                    nameof(count)
+                );
+            }
+
             List<TrafficEvent> events = new List<TrafficEvent>();
 
             Random random = new Random();
 
-            List<int> cameraIds = new List<int>
+            List<string> plates = GeneratePlates(random);
+
+            for (int i = 1; i <= count; i++)
             {
-                1, 2, 3, 4, 5,
-                6, 7, 8, 9, 10
-            };
+                TrafficEvent trafficEvent = new TrafficEvent
+                {
+                    Id = i,
 
-            // Generate random plates
+                    PlateNo =
+                        plates[random.Next(plates.Count)],
 
+                    CameraId =
+                        _cameraIds[random.Next(_cameraIds.Count)],
+
+                    Speed =
+                        random.Next(MinSpeed, MaxSpeed + 1),
+
+                    MaxSpeed =
+                        MaxAllowedSpeed,
+
+                    DateTime =
+                        DateTime.Now.AddDays(
+                            -random.Next(DaysBack)
+                        )
+                };
+
+                events.Add(trafficEvent);
+            }
+
+            return events;
+        }
+
+        private List<string> GeneratePlates(Random random)
+        {
             List<string> plates = new List<string>();
 
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < PlateCount; i++)
             {
                 string plate =
                     $"{random.Next(10, 100)}" +
@@ -31,32 +78,7 @@ namespace camera_control_project
                 plates.Add(plate);
             }
 
-            // Generate traffic events
-
-            for (int i = 1; i <= count; i++)
-            {
-                int cameraId =
-                    cameraIds[random.Next(cameraIds.Count)];
-
-                double maxSpeed = 121;
-                double speed = random.Next(40, 161);
-
-                TrafficEvent trafficEvent = new TrafficEvent
-                {
-                    Id = i,
-                    PlateNo = plates[random.Next(plates.Count)],
-                    CameraId = cameraId,
-                    Speed = speed,
-                    MaxSpeed = maxSpeed,
-                    DateTime = DateTime.Now.AddDays(
-                        -random.Next(0, 30)
-                    )
-                };
-
-                events.Add(trafficEvent);
-            }
-
-            return events;
+            return plates;
         }
     }
 }

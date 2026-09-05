@@ -3,24 +3,21 @@
     public class CameraViolationResult
     {
         public int CameraId { get; set; }
+
         public int ViolationCount { get; set; }
     }
 
-    public class FrequentViolatorResult
+    public class PlateViolationResult
     {
-        public string PlateNo { get; set; }
+        public string PlateNo { get; set; } = string.Empty;
+
         public int ViolationCount { get; set; }
     }
 
     public class MaxSpeedByCameraResult
     {
         public int CameraId { get; set; }
-        public double? MaxSpeed { get; set; }
-    }
 
-    public class TopViolatorResult
-    {
-        public string PlateNo { get; set; }
-        public int ViolationCount { get; set; }
+        public double? MaxSpeed { get; set; }
     }
 }

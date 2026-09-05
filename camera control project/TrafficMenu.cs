@@ -1,23 +1,24 @@
 using System;
-
 using System.Collections.Generic;
 
 namespace camera_control_project
 {
     public class TrafficMenu
     {
-        private readonly List<int> _cameraIds = new List<int>
-        {
-            1, 2, 3, 4, 5,
-            6, 7, 8, 9, 10
-        };
+        private const int EventCount = 500;
+
+        private readonly List<int> _cameraIds = CameraConfiguration.CameraIds;
 
         private List<TrafficEvent> _events = new List<TrafficEvent>();
+
         private TrafficEventAnalyzer _analyzer;
 
         public TrafficMenu()
         {
-            _analyzer = new TrafficEventAnalyzer(_events, _cameraIds);
+            _analyzer = new TrafficEventAnalyzer(
+                _events,
+                _cameraIds
+            );
         }
 
         public void Run()
@@ -26,93 +27,78 @@ namespace camera_control_project
             {
                 while (true)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("What do you want?");
-                    Console.WriteLine("1. Generate database.");
-                    Console.WriteLine("2. List of traffic.");
-                    Console.WriteLine("3. Speed violations.");
-                    Console.WriteLine("4. Number of violations for each camera.");
-                    Console.WriteLine("5. Last violation for each plate.");
-                    Console.WriteLine("6. Plates with more than 5 violations");
-                    Console.WriteLine("7. Cameras with no violations");
-                    Console.WriteLine("8. Maximum speed of each camera");
-                    Console.WriteLine("9. Top 3 most violating plates");
-                    Console.WriteLine("10. Violation percentage");
-                    Console.WriteLine("0. Finish");
+                    ShowMenu();
 
-                    try
-                    {
-                        int choice = int.Parse(Console.ReadLine());
+                    Console.Write("Enter your choice: ");
 
-                        if (choice < 0 || choice > 10)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine(
-                                "Please enter a number between 0 and 10."
-                            );
-
-                            continue;
-                        }
-
-                        if (choice >= 2 && choice <= 10 && _events.Count == 0)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine(
-                                "Database not generated! Press 1 to generate."
-                            );
-
-                            continue;
-                        }
-
-                        switch (choice)
-                        {
-                            case 1:
-                                GenerateDatabase();
-                                break;
-
-                            case 2:
-                                ListTrafficEvents();
-                                break;
-
-                            case 3:
-                                ShowSpeedingViolations();
-                                break;
-
-                            case 4:
-                                ShowViolationsByCamera();
-                                break;
-
-                            case 5:
-                                ShowLastViolationByPlate();
-                                break;
-
-                            case 6:
-                                ShowFrequentViolators();
-                                break;
-
-                            case 7:
-                                ShowCamerasWithoutViolations();
-                                break;
-
-                            case 8:
-                                ShowMaxSpeedByCamera();
-                                break;
-
-                            case 9:
-                                ShowTopThreeViolators();
-                                break;
-
-                            case 10:
-                                ShowViolationPercentage();
-                                break;
-
-                            case 0:
-                                return;
-                        }
-                    }
-                    catch (FormatException)
+                    if (!int.TryParse(Console.ReadLine(), out int choice))
                     {
                         Console.WriteLine("Please enter a valid number!");
+                        continue;
+                    }
+
+                    if (choice < 0 || choice > 10)
+                    {
+                        Console.WriteLine(
+                            "Please enter a number between 0 and 10."
+                        );
+
+                        continue;
+                    }
+
+                    if (choice >= 2 && choice <= 10 && _events.Count == 0)
+                    {
+                        Console.WriteLine(
+                            "Database not generated! Press 1 to generate."
+                        );
+
+                        continue;
+                    }
+
+                    switch (choice)
+                    {
+                        case 1:
+                            GenerateDatabase();
+                            break;
+
+                        case 2:
+                            ListTrafficEvents();
+                            break;
+
+                        case 3:
+                            ShowSpeedingViolations();
+                            break;
+
+                        case 4:
+                            ShowViolationsByCamera();
+                            break;
+
+                        case 5:
+                            ShowLastViolationByPlate();
+                            break;
+
+                        case 6:
+                            ShowFrequentViolators();
+                            break;
+
+                        case 7:
+                            ShowCamerasWithoutViolations();
+                            break;
+
+                        case 8:
+                            ShowMaxSpeedByCamera();
+                            break;
+
+                        case 9:
+                            ShowTopThreeViolators();
+                            break;
+
+                        case 10:
+                            ShowViolationPercentage();
+                            break;
+
+                        case 0:
+                            return;
                     }
                 }
             }
@@ -124,13 +110,31 @@ namespace camera_control_project
             }
         }
 
+        private void ShowMenu()
+        {
+            Console.WriteLine();
+            Console.WriteLine("What do you want?");
+            Console.WriteLine("1. Generate database.");
+            Console.WriteLine("2. List of traffic.");
+            Console.WriteLine("3. Speed violations.");
+            Console.WriteLine("4. Number of violations for each camera.");
+            Console.WriteLine("5. Last violation for each plate.");
+            Console.WriteLine("6. Plates with more than 5 violations.");
+            Console.WriteLine("7. Cameras with no violations.");
+            Console.WriteLine("8. Maximum speed of each camera.");
+            Console.WriteLine("9. Top 3 most violating plates.");
+            Console.WriteLine("10. Violation percentage.");
+            Console.WriteLine("0. Finish");
+        }
+
         private void GenerateDatabase()
         {
             Console.WriteLine("Generating database.");
 
-            TrafficEventGenerator generator = new TrafficEventGenerator();
+            TrafficEventGenerator generator =
+                new TrafficEventGenerator();
 
-            _events = generator.GenerateEvents(500);
+            _events = generator.GenerateEvents(EventCount);
 
             _analyzer = new TrafficEventAnalyzer(
                 _events,
@@ -149,14 +153,7 @@ namespace camera_control_project
 
             foreach (TrafficEvent item in _events)
             {
-                Console.WriteLine(
-                    $"Id: {item.Id} | " +
-                    $"Plate: {item.PlateNo} | " +
-                    $"Camera: {item.CameraId} | " +
-                    $"Speed: {item.Speed} | " +
-                    $"MaxSpeed: {item.MaxSpeed} | " +
-                    $"Date: {item.DateTime}"
-                );
+                PrintTrafficEvent(item);
             }
         }
 
@@ -171,20 +168,12 @@ namespace camera_control_project
             if (speedingViolations.Count == 0)
             {
                 Console.WriteLine("No speeding violations found.");
+                return;
             }
-            else
+
+            foreach (TrafficEvent item in speedingViolations)
             {
-                foreach (TrafficEvent item in speedingViolations)
-                {
-                    Console.WriteLine(
-                        $"Id: {item.Id} | " +
-                        $"Plate: {item.PlateNo} | " +
-                        $"Camera: {item.CameraId} | " +
-                        $"Speed: {item.Speed} | " +
-                        $"MaxSpeed: {item.MaxSpeed} | " +
-                        $"Date: {item.DateTime}"
-                    );
-                }
+                PrintTrafficEvent(item);
             }
         }
 
@@ -199,16 +188,15 @@ namespace camera_control_project
             if (cameraViolations.Count == 0)
             {
                 Console.WriteLine("No violations found for any camera.");
+                return;
             }
-            else
+
+            foreach (CameraViolationResult item in cameraViolations)
             {
-                foreach (CameraViolationResult item in cameraViolations)
-                {
-                    Console.WriteLine(
-                        $"Camera {item.CameraId}: " +
-                        $"{item.ViolationCount} violations"
-                    );
-                }
+                Console.WriteLine(
+                    $"Camera {item.CameraId}: " +
+                    $"{item.ViolationCount} violations"
+                );
             }
         }
 
@@ -223,18 +211,17 @@ namespace camera_control_project
             if (lastViolations.Count == 0)
             {
                 Console.WriteLine("No violations found.");
+                return;
             }
-            else
+
+            foreach (TrafficEvent item in lastViolations)
             {
-                foreach (TrafficEvent item in lastViolations)
-                {
-                    Console.WriteLine(
-                        $"Plate: {item.PlateNo} | " +
-                        $"Speed: {item.Speed} | " +
-                        $"Camera: {item.CameraId} | " +
-                        $"Date: {item.DateTime}"
-                    );
-                }
+                Console.WriteLine(
+                    $"Plate: {item.PlateNo} | " +
+                    $"Speed: {item.Speed} | " +
+                    $"Camera: {item.CameraId} | " +
+                    $"Date: {item.DateTime}"
+                );
             }
         }
 
@@ -243,22 +230,24 @@ namespace camera_control_project
             Console.WriteLine();
             Console.WriteLine("Plates With More Than Five Violations:");
 
-            List<FrequentViolatorResult> frequentViolators =
+            List<PlateViolationResult> frequentViolators =
                 _analyzer.GetFrequentViolators();
 
             if (frequentViolators.Count == 0)
             {
-                Console.WriteLine("No plate has more than five violations.");
+                Console.WriteLine(
+                    "No plate has more than five violations."
+                );
+
+                return;
             }
-            else
+
+            foreach (PlateViolationResult item in frequentViolators)
             {
-                foreach (FrequentViolatorResult item in frequentViolators)
-                {
-                    Console.WriteLine(
-                        $"Plate: {item.PlateNo} | " +
-                        $"Violations: {item.ViolationCount}"
-                    );
-                }
+                Console.WriteLine(
+                    $"Plate: {item.PlateNo} | " +
+                    $"Violations: {item.ViolationCount}"
+                );
             }
         }
 
@@ -272,16 +261,18 @@ namespace camera_control_project
 
             if (camerasWithoutViolations.Count == 0)
             {
-                Console.WriteLine("All cameras have at least one violation.");
+                Console.WriteLine(
+                    "All cameras have at least one violation."
+                );
+
+                return;
             }
-            else
+
+            foreach (int cameraId in camerasWithoutViolations)
             {
-                foreach (int cameraId in camerasWithoutViolations)
-                {
-                    Console.WriteLine(
-                        $"Camera {cameraId} has no violations."
-                    );
-                }
+                Console.WriteLine(
+                    $"Camera {cameraId} has no violations."
+                );
             }
         }
 
@@ -317,22 +308,21 @@ namespace camera_control_project
             Console.WriteLine();
             Console.WriteLine("Top 3 Violators:");
 
-            List<TopViolatorResult> topThreeViolators =
+            List<PlateViolationResult> topThreeViolators =
                 _analyzer.GetTopThreeViolators();
 
             if (topThreeViolators.Count == 0)
             {
                 Console.WriteLine("No violations found.");
+                return;
             }
-            else
+
+            foreach (PlateViolationResult item in topThreeViolators)
             {
-                foreach (TopViolatorResult item in topThreeViolators)
-                {
-                    Console.WriteLine(
-                        $"Plate: {item.PlateNo} | " +
-                        $"Violations: {item.ViolationCount}"
-                    );
-                }
+                Console.WriteLine(
+                    $"Plate: {item.PlateNo} | " +
+                    $"Violations: {item.ViolationCount}"
+                );
             }
         }
 
@@ -345,11 +335,23 @@ namespace camera_control_project
                 _analyzer.GetViolationPercentage();
 
             Console.WriteLine($"Total Events: {_events.Count}");
+
             Console.WriteLine(
                 $"Violation Percentage: {violationPercentage:F2}%"
             );
         }
+
+        private void PrintTrafficEvent(TrafficEvent item)
+        {
+            Console.WriteLine(
+                $"Id: {item.Id} | " +
+                $"Plate: {item.PlateNo} | " +
+                $"Camera: {item.CameraId} | " +
+                $"Speed: {item.Speed} | " +
+                $"MaxSpeed: {item.MaxSpeed} | " +
+                $"Date: {item.DateTime}"
+            );
+        }
     }
 }
-}
-}
+

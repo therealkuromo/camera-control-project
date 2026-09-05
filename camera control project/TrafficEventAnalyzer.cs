@@ -16,25 +16,27 @@ namespace camera_control_project
             _cameraIds = cameraIds;
         }
 
+        // Check if a traffic event is a violation
+        private bool IsViolation(TrafficEvent trafficEvent)
+        {
+            return trafficEvent.Speed > trafficEvent.MaxSpeed;
+        }
 
         // 1 & 2. Speeding violations
         // Sorted by highest speed
-
         public List<TrafficEvent> GetSpeedingViolations()
         {
             return _events
-                .Where(x => x.Speed > x.MaxSpeed)
+                .Where(IsViolation)
                 .OrderByDescending(x => x.Speed)
                 .ToList();
         }
 
-
         // 3. Number of violations for each camera
-
         public List<CameraViolationResult> GetViolationsByCamera()
         {
             return _events
-                .Where(x => x.Speed > x.MaxSpeed)
+                .Where(IsViolation)
                 .GroupBy(x => x.CameraId)
                 .Select(group => new CameraViolationResult
                 {
@@ -45,13 +47,11 @@ namespace camera_control_project
                 .ToList();
         }
 
-
         // 4. Last violation for each plate
-
         public List<TrafficEvent> GetLastViolationByPlate()
         {
             return _events
-                .Where(x => x.Speed > x.MaxSpeed)
+                .Where(IsViolation)
                 .GroupBy(x => x.PlateNo)
                 .Select(group =>
                     group
@@ -62,17 +62,15 @@ namespace camera_control_project
                 .ToList();
         }
 
-
         // 5. Plates with more than 5 violations
-
-        public List<FrequentViolatorResult> GetFrequentViolators()
+        public List<PlateViolationResult> GetFrequentViolators()
         {
             return _events
-                .Where(x => x.Speed > x.MaxSpeed)
+                .Where(IsViolation)
                 .GroupBy(x => x.PlateNo)
                 .Where(group => group.Count() > 5)
                 .OrderByDescending(group => group.Count())
-                .Select(group => new FrequentViolatorResult
+                .Select(group => new PlateViolationResult
                 {
                     PlateNo = group.Key,
                     ViolationCount = group.Count()
@@ -80,24 +78,20 @@ namespace camera_control_project
                 .ToList();
         }
 
-
         // 6. Cameras with no violations
-
         public List<int> GetCamerasWithoutViolations()
         {
             return _cameraIds
                 .Where(cameraId =>
                     !_events.Any(x =>
                         x.CameraId == cameraId &&
-                        x.Speed > x.MaxSpeed
+                        IsViolation(x)
                     )
                 )
                 .ToList();
         }
 
-
         // 7. Maximum speed of each camera
-
         public List<MaxSpeedByCameraResult> GetMaxSpeedByCamera()
         {
             return _cameraIds
@@ -114,17 +108,15 @@ namespace camera_control_project
                 .ToList();
         }
 
-
         // 8. Top 3 most violating plates
-
-        public List<TopViolatorResult> GetTopThreeViolators()
+        public List<PlateViolationResult> GetTopThreeViolators()
         {
             return _events
-                .Where(x => x.Speed > x.MaxSpeed)
+                .Where(IsViolation)
                 .GroupBy(x => x.PlateNo)
                 .OrderByDescending(group => group.Count())
                 .Take(3)
-                .Select(group => new TopViolatorResult
+                .Select(group => new PlateViolationResult
                 {
                     PlateNo = group.Key,
                     ViolationCount = group.Count()
@@ -132,9 +124,7 @@ namespace camera_control_project
                 .ToList();
         }
 
-
         // 9. Violation percentage
-
         public double GetViolationPercentage()
         {
             int totalEvents = _events.Count;
@@ -144,8 +134,7 @@ namespace camera_control_project
                 return 0;
             }
 
-            int totalViolations = _events
-                .Count(x => x.Speed > x.MaxSpeed);
+            int totalViolations = _events.Count(IsViolation);
 
             return (double)totalViolations / totalEvents * 100;
         }
