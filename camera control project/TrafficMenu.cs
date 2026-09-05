@@ -1,4 +1,5 @@
 using System;
+
 using System.Collections.Generic;
 
 namespace camera_control_project
@@ -349,4 +350,8 @@ namespace camera_control_project
             );
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 5943c96 (Add gitignore and remove generated files)
