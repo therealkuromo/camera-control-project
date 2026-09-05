@@ -7,16 +7,15 @@ namespace camera_control_project
     {
         private const int PlateCount = 50;
 
-        private const double MaxAllowedSpeed = 121;
-
         private const int MinSpeed = 40;
 
         private const int MaxSpeed = 160;
 
-        private const int DaysBack = 30;
-
         private readonly List<int> _cameraIds =
             CameraConfiguration.CameraIds;
+
+        private readonly TrafficSettings _settings =
+            AppConfiguration.TrafficSettings;
 
         public List<TrafficEvent> GenerateEvents(int count)
         {
@@ -38,31 +37,41 @@ namespace camera_control_project
 
             for (int i = 1; i <= count; i++)
             {
-                TrafficEvent trafficEvent = new TrafficEvent
-                {
-                    Id = i,
+                TrafficEvent trafficEvent =
+                    new TrafficEvent
+                    {
+                        Id = i,
 
-                    PlateNo =
-                        plates[Random.Shared.Next(plates.Count)],
+                        PlateNo =
+                            plates[
+                                Random.Shared.Next(
+                                    plates.Count
+                                )
+                            ],
 
-                    CameraId =
-                        _cameraIds[
-                            Random.Shared.Next(_cameraIds.Count)
-                        ],
+                        CameraId =
+                            _cameraIds[
+                                Random.Shared.Next(
+                                    _cameraIds.Count
+                                )
+                            ],
 
-                    Speed =
-                        Random.Shared.Next(
-                            MinSpeed,
-                            MaxSpeed + 1
-                        ),
+                        Speed =
+                            Random.Shared.Next(
+                                MinSpeed,
+                                MaxSpeed + 1
+                            ),
 
-                    MaxSpeed = MaxAllowedSpeed,
+                        MaxSpeed =
+                            _settings.MaxAllowedSpeed,
 
-                    DateTime =
-                        now.AddDays(
-                            -Random.Shared.Next(DaysBack)
-                        )
-                };
+                        DateTime =
+                            now.AddDays(
+                                -Random.Shared.Next(
+                                    _settings.DaysBack
+                                )
+                            )
+                    };
 
                 events.Add(trafficEvent);
             }
@@ -79,7 +88,10 @@ namespace camera_control_project
             {
                 string plate =
                     $"{Random.Shared.Next(10, 100)}" +
-                    $"{(char)Random.Shared.Next('A', 'Z' + 1)}" +
+                    $"{(char)Random.Shared.Next(
+                        'A',
+                        'Z' + 1
+                    )}" +
                     $"{Random.Shared.Next(100, 1000)}";
 
                 plates.Add(plate);
