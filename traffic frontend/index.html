@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Traffic Control Dashboard</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+
+<body>
+
+    <header class="header">
+
+        <div>
+
+            <h1>🚦 Traffic Control</h1>
+
+            <p>
+                Traffic Monitoring Dashboard
+            </p>
+
+        </div>
+
+
+        <button id="refreshButton">
+            Refresh
+        </button>
+
+    </header>
+
+
+    <div class="layout">
+
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar">
+
+            <h2>Endpoints</h2>
+
+
+            <button
+                class="endpoint-button active"
+                data-endpoint="traffic">
+
+                All Traffic
+
+            </button>
+
+
+            <button
+                class="endpoint-button"
+                data-endpoint="violations">
+
+                Speed Violations
+
+            </button>
+
+
+            <button
+                class="endpoint-button"
+                data-endpoint="cameras">
+
+                Violations By Camera
+
+            </button>
+
+
+            <button
+                class="endpoint-button"
+                data-endpoint="last-violations">
+
+                Last Violation By Plate
+
+            </button>
+
+
+            <button
+                class="endpoint-button"
+                data-endpoint="frequent-violators">
+
+                Frequent Violators
+
+            </button>
+
+
+            <button
+                class="endpoint-button"
+                data-endpoint="cameras-without-violations">
+
+                Cameras Without Violations
+
+            </button>
+
+
+            <button
+                class="endpoint-button"
+                data-endpoint="max-speed">
+
+                Maximum Speed
+
+            </button>
+
+
+            <button
+                class="endpoint-button"
+                data-endpoint="top-violators">
+
+                Top 3 Violators
+
+            </button>
+
+
+            <button
+                class="endpoint-button"
+                data-endpoint="violation-percentage">
+
+                Violation Percentage
+
+            </button>
+
+        </aside>
+
+
+        <!-- Main Content -->
+
+        <main class="content">
+
+
+            <!-- Statistics -->
+
+            <section class="statistics">
+
+                <div class="stat-card">
+
+                    <h3>
+                        Total Traffic
+                    </h3>
+
+                    <p id="totalEvents">
+                        -
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3>
+                        Violations
+                    </h3>
+
+                    <p id="totalViolations">
+                        -
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3>
+                        Violation Rate
+                    </h3>
+
+                    <p id="violationPercentage">
+                        -
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Endpoint Result -->
+
+            <section class="panel">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2 id="endpointTitle">
+                            All Traffic
+
+                        </h2>
+
+                        <p id="endpointDescription">
+                            All traffic events from database.
+                        </p>
+
+                    </div>
+
+
+                    <span id="recordCount">
+                        0 records
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="resultContainer"
+                    class="result-container">
+
+                </div>
+
+
+            </section>
+
+
+            <!-- Loading -->
+
+            <p
+                id="loadingMessage"
+                class="loading hidden">
+
+                Loading...
+
+            </p>
+
+
+            <!-- Error -->
+
+            <p
+                id="errorMessage"
+                class="error hidden">
+
+            </p>
+
+
+        </main>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
+

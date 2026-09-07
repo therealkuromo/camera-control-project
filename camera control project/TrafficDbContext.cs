@@ -20,9 +20,11 @@ namespace camera_control_project
                 );
 
             string databasePath =
-                Path.Combine(
-                    AppContext.BaseDirectory,
-                    configuredPath
+                Path.GetFullPath(
+                    Path.Combine(
+                        AppContext.BaseDirectory,
+                        configuredPath
+                    )
                 );
 
             optionsBuilder.UseSqlite(

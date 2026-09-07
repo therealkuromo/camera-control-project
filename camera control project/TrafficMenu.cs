@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,9 +35,13 @@ namespace camera_control_project
                 Console.Write("Enter your choice: ");
 
                 if (!int.TryParse(
-                    Console.ReadLine(),
-                    out int choice))
+    Console.ReadLine(),
+    out int choice))
                 {
+                    AppLogger.Logger.LogWarning(
+                        "User entered an invalid menu value."
+                    );
+
                     Console.WriteLine(
                         "Please enter a valid number!"
                     );
@@ -46,6 +51,11 @@ namespace camera_control_project
 
                 if (choice < 0 || choice > 10)
                 {
+                    AppLogger.Logger.LogWarning(
+                        "User entered an out-of-range menu choice: {Choice}",
+                        choice
+                    );
+
                     Console.WriteLine(
                         "Please enter a number between 0 and 10."
                     );
@@ -121,7 +131,10 @@ namespace camera_control_project
         private void GenerateDatabase()
         {
             Console.WriteLine();
-            Console.WriteLine("Generating database...");
+
+            AppLogger.Logger.LogInformation(
+                "Starting database generation."
+            );
 
             TrafficEventGenerator generator =
                 new TrafficEventGenerator();
@@ -144,6 +157,11 @@ namespace camera_control_project
 
             // Save changes
             context.SaveChanges();
+            AppLogger.Logger.LogInformation(
+            "Database generated successfully. " +
+            "{Count} events saved.",
+            newEvents.Count
+            );
 
             // Update in-memory data
             _events = newEvents;
@@ -165,32 +183,58 @@ namespace camera_control_project
 
         private bool LoadEventsFromDatabase()
         {
-            using TrafficDbContext context =
-                new TrafficDbContext();
-
-            _events =
-                context.TrafficEvents
-                    .AsNoTracking()
-                    .ToList();
-
-            if (_events.Count == 0)
+            try
             {
+                using TrafficDbContext context =
+                    new TrafficDbContext();
+
+                _events =
+                    context.TrafficEvents
+                        .AsNoTracking()
+                        .ToList();
+
+                AppLogger.Logger.LogInformation(
+                    "Loaded {Count} traffic events from database.",
+                    _events.Count
+                );
+
+                if (_events.Count == 0)
+                {
+                    AppLogger.Logger.LogWarning(
+                        "Database is empty."
+                    );
+
+                    Console.WriteLine();
+                    Console.WriteLine(
+                        "Database is empty! " +
+                        "Please generate the database first."
+                    );
+
+                    return false;
+                }
+
+                _analyzer =
+                    new TrafficEventAnalyzer(
+                        _events,
+                        _cameraIds
+                    );
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Logger.LogError(
+                    ex,
+                    "Failed to load traffic events from database."
+                );
+
                 Console.WriteLine();
                 Console.WriteLine(
-                    "Database is empty! " +
-                    "Please generate the database first."
+                    "An error occurred while loading the database."
                 );
 
                 return false;
             }
-
-            _analyzer =
-                new TrafficEventAnalyzer(
-                    _events,
-                    _cameraIds
-                );
-
-            return true;
         }
 
         private void ListTrafficEvents()
