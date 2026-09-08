@@ -3,7 +3,7 @@
 // ============================================
 
 const API_URL =
-    "http://localhost:5141/api/Traffic";
+    "https://localhost:7163/api/Traffic";
 
 
 // ============================================
